@@ -1,0 +1,39 @@
+import {createToken, encodeCard}  from "public/stripeAPI.js";
+import {charge}  from 'backend/stripeProxy';
+var payment;
+export function payNow(event) {
+    createToken(encodeCard(createCard()))
+        .then((token) => {
+            console.log("Card token: " + token);
+            charge(token, payment)
+                .then((chargeResponse) => {
+                    console.log("Charge ID: " + chargeResponse.id);
+                });
+        });
+}
+
+function createCard() {
+    return {
+        "name": $w("#input7").value,
+        "number": $w("#input3").value,
+        "cvc": $w("#input4").value,
+        "exp_year": $w("#input5").value,
+        "exp_month": $w("#dropdown2").value,
+        
+    };
+}
+
+function changeState() {
+    payment = {
+        "amount": ($w("#input6").value * 100),
+        "currency": "USD"
+    }
+}
+
+export function button1_click(event) {
+	payNow();
+}
+
+export function input6_viewportEnter(event) {
+	changeState(); 
+}
